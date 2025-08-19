@@ -2,3 +2,5 @@ node_modules
 dist
 .port
 .DS_Store
+.specstory
+.cursorindexingignore
