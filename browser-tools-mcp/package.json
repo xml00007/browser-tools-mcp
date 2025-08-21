@@ -2,6 +2,7 @@
   "name": "@agentdeskai/browser-tools-mcp",
   "version": "1.2.0",
   "description": "MCP (Model Context Protocol) server for browser tools integration",
+  "type": "module",
   "main": "dist/mcp-server.js",
   "bin": {
     "browser-tools-mcp": "dist/mcp-server.js"
@@ -11,6 +12,7 @@
     "inspect-live": "npx @modelcontextprotocol/inspector npx -- @agentdeskai/browser-tools-mcp",
     "build": "tsc",
     "start": "tsc && node dist/mcp-server.js",
+    "dev": "NODE_OPTIONS='--loader=ts-node/esm' node ./mcp-server.ts",
     "prepublishOnly": "npm run build",
     "update": "npm run build && npm version patch && npm publish"
   },
@@ -36,12 +38,13 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
-    "@types/ws": "^8.5.14",
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.1",
     "@types/node-fetch": "^2.6.11",
+    "@types/ws": "^8.5.14",
+    "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }
 }
