@@ -12,6 +12,8 @@
     "start": "tsc && node dist/browser-connector.js",
     "start:dev": "NODE_OPTIONS='--loader=ts-node/esm' node ./browser-connector.ts",
     "dev": "NODE_OPTIONS='--loader=ts-node/esm' node ./browser-connector.ts",
+    "test:db": "node test-db.js",
+    "query:db": "node db-query.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -29,9 +31,11 @@
     "@modelcontextprotocol/sdk": "^1.4.1",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
     "express": "^4.21.2",
     "lighthouse": "^11.6.0",
     "llm-cost": "^1.0.5",
+    "mysql2": "^3.14.2",
     "node-fetch": "^2.7.0",
     "puppeteer-core": "^22.4.1",
     "ws": "^8.18.0"
@@ -43,6 +47,7 @@
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/mysql": "^2.15.27",
     "@types/node": "^22.13.1",
     "@types/node-fetch": "^2.6.11",
     "@types/puppeteer-core": "^7.0.4",

@@ -20,6 +20,11 @@ import {
 } from "./lighthouse/index.js";
 import * as net from "net";
 import { runBestPracticesAudit } from "./lighthouse/best-practices.js";
+import {
+  initializeDatabase,
+  logHttpRequest,
+  closeDatabase
+} from "./database.js";
 
 /**
  * Converts a file path to the appropriate format for the current platform
@@ -417,32 +422,9 @@ app.post("/extension-log", (req, res) => {
       }
       break;
     case "network-request":
-      const logEntry = {
-        url: data.url,
-        method: data.method,
-        status: data.status,
-        timestamp: data.timestamp,
-      };
-      console.log("Adding network request:", logEntry);
-
-      // Route network requests based on status code
-      if (data.status >= 400) {
-        networkErrors.push(data);
-        if (networkErrors.length > currentSettings.logLimit) {
-          console.log(
-            `Network errors exceeded limit (${currentSettings.logLimit}), removing oldest entry`
-          );
-          networkErrors.shift();
-        }
-      } else {
-        networkSuccess.push(data);
-        if (networkSuccess.length > currentSettings.logLimit) {
-          console.log(
-            `Network success logs exceeded limit (${currentSettings.logLimit}), removing oldest entry`
-          );
-          networkSuccess.shift();
-        }
-      }
+      logHttpRequest(data).catch((err: any) => {
+        console.error("Failed to log HTTP request:", err);
+      });
       break;
     case "selected-element":
       console.log("Updating selected element:", {
@@ -1409,6 +1391,15 @@ export class BrowserConnector {
     console.log(`Starting Browser Tools Server...`);
     console.log(`Requested port: ${REQUESTED_PORT}`);
 
+    // Initialize database connection
+    try {
+      await initializeDatabase();
+      console.log('Database initialized successfully');
+    } catch (dbError) {
+      console.error('Failed to initialize database:', dbError);
+      console.log('Continuing without database support...');
+    }
+
     // Find an available port
     try {
       PORT = await getAvailablePort(REQUESTED_PORT);
@@ -1493,6 +1484,14 @@ export class BrowserConnector {
             }
           });
         });
+
+        // Close database connection
+        try {
+          await closeDatabase();
+          console.log("Database connection closed successfully");
+        } catch (dbError) {
+          console.error("Error closing database connection:", dbError);
+        }
 
         // Clear all logs
         clearAllLogs();

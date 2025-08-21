@@ -479,16 +479,24 @@ chrome.devtools.network.onNavigated.addListener((url) => {
 chrome.devtools.network.onRequestFinished.addListener((request) => {
   if (request._resourceType === "xhr" || request._resourceType === "fetch") {
     request.getContent((responseBody) => {
+      const {origin,pathname} =  new URL(request.request.url)
       const entry = {
         type: "network-request",
-        url: request.request.url,
+        origin,
+        path:pathname,
         method: request.request.method,
-        status: request.response.status,
-        requestHeaders: request.request.headers,
-        responseHeaders: request.response.headers,
         requestBody: request.request.postData?.text ?? "",
+        requestCookies: request.request.cookies,
+        requestHeaders: request.request.headers,
+        responseStatus: request.response.status,
+        responseHeaders: request.response.headers,
         responseBody: responseBody ?? "",
       };
+      // 只发送以 http://localhost:9000/api/b 开头的请求
+      if (!origin.startsWith("http://localhost:")) {
+        // 不发送其他请求
+        return;
+      }
       sendToBrowserConnector(entry);
     });
   }
