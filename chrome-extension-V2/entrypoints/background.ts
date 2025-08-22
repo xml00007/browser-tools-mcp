@@ -111,20 +111,6 @@ export default defineBackground(() => {
     }
   }
 
-  // Helper function to process the tab and run the audit
-  function processTabForAudit(tab: any, tabId: number) {
-    const url = tab.url;
-
-    if (!url) {
-      console.error(`No URL available for tab ${tabId}`);
-      return;
-    }
-
-    // Update our cache and the server with this URL
-    tabUrls.set(tabId, url);
-    updateServerWithUrl(tabId, url);
-  }
-
   // Function to get the current URL for a tab
   async function getCurrentTabUrl(tabId: number) {
     try {

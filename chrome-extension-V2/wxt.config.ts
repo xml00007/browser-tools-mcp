@@ -15,9 +15,7 @@ export default defineConfig({
       'windows',
     ],
     host_permissions: [
-      'http://localhost/*',
-      'https://localhost/*',
-      '*://*.google.com/*',
+      '<all_urls>',
     ],
   },
 });
