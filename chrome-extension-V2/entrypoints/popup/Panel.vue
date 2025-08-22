@@ -1,4 +1,3 @@
-/* @source cursor @line_count 174 @branch main*/
 <template>
   <div class="panel-container">
     <!-- Connect Component -->

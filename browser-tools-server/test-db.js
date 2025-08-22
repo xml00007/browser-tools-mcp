@@ -1,4 +1,4 @@
-/* @source cursor @line_count 50 @branch main */
+ 
 
 import { initializeDatabase, getConnection, closeDatabase } from './database.js';
 

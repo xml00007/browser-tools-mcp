@@ -1,4 +1,3 @@
-/* @source cursor @line_count 645 @branch main*/
 <template>
   <div class="settings-section">
     <h3>Server Connection Settings</h3>

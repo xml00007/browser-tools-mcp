@@ -1,4 +1,3 @@
-/* @source cursor @line_count 331 @branch main*/
 <template>
   <div>
     <!-- Quick Actions Section -->
