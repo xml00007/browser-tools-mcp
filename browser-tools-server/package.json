@@ -10,8 +10,8 @@
   "scripts": {
     "build": "tsc",
     "start": "tsc && node dist/browser-connector.js",
-    "start:dev": "NODE_OPTIONS='--loader=ts-node/esm' node ./browser-connector.ts",
-    "dev": "NODE_OPTIONS='--loader=ts-node/esm' node ./browser-connector.ts",
+    "start:dev": "pnpm dlx tsx ./browser-connector.ts",
+    "dev": "pnpm dlx tsx ./browser-connector.ts",
     "test:db": "node test-db.js",
     "query:db": "node db-query.js",
     "prepublishOnly": "npm run build"
