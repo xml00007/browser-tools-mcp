@@ -36,8 +36,8 @@ const settings = reactive({
 const connectRef = ref();
 
 // Update settings function
-const updateSettings = (newSettings: any) => {
-  Object.assign(settings, newSettings);
+const updateSettings = (_newSettings: any) => {
+  Object.assign(settings, _newSettings);
 };
 
 // Save settings function
@@ -64,7 +64,7 @@ onMounted(() => {
 
     // Add listener for background script messages
     chrome.runtime.onMessage.addListener(
-      (message: any, sender: any, sendResponse: any) => {
+      (message: any, _sender: any, _sendResponse: any) => {
         if (message.type === 'CONNECTION_STATUS_UPDATE') {
           console.log(
             `Received connection status update: ${
@@ -153,7 +153,7 @@ onMounted(() => {
 // Watch for settings changes and save to storage
 watch(
   settings,
-  (newSettings) => {
+  () => {
     saveSettings();
   },
   { deep: true },

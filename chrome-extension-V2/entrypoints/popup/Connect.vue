@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, computed } from 'vue';
+import { ref, reactive, onMounted, computed } from 'vue';
 
 // Props from parent
 interface Props {
@@ -222,7 +222,7 @@ const scheduleReconnectAttempt = () => {
 };
 
 // Test connection function
-const testConnection = async (host?: string, port?: number) => {
+const testConnection = async () => {
   const targetHost = props.settings.serverHost;
   const targetPort = props.settings.serverPort;
 
@@ -274,7 +274,7 @@ const testConnection = async (host?: string, port?: number) => {
           if (text.trim().startsWith('{')) {
             serverInfo = JSON.parse(text);
           }
-        } catch (e) {
+        } catch {
           console.log('Response is not JSON, treating as text');
         }
 
