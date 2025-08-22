@@ -6,7 +6,8 @@
       "Bash(npx:*)",
       "Bash(node:*)",
       "Bash(npm install:*)",
-      "Bash(pnpm:*)"
+      "Bash(pnpm:*)",
+      "Bash(npm:*)"
     ],
     "deny": [],
     "ask": []

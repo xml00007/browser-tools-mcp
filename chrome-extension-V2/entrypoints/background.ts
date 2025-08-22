@@ -6,7 +6,7 @@ export default defineBackground(() => {
 
   // Listen for messages from the devtools panel
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === "GET_CURRENT_URL" && message.tabId) {
+    if (message.type === 'GET_CURRENT_URL' && message.tabId) {
       getCurrentTabUrl(message.tabId)
         .then((url) => {
           sendResponse({ success: true, url: url });
@@ -18,31 +18,31 @@ export default defineBackground(() => {
     }
 
     // Handle explicit request to update the server with the URL
-    if (message.type === "UPDATE_SERVER_URL" && message.tabId && message.url) {
+    if (message.type === 'UPDATE_SERVER_URL' && message.tabId && message.url) {
       console.log(
-        `Background: Received request to update server with URL for tab ${message.tabId}: ${message.url}`
+        `Background: Received request to update server with URL for tab ${message.tabId}: ${message.url}`,
       );
       updateServerWithUrl(
         message.tabId,
         message.url,
-        message.source || "explicit_update"
+        message.source || 'explicit_update',
       )
         .then(() => {
           if (sendResponse) sendResponse({ success: true });
         })
         .catch((error) => {
-          console.error("Background: Error updating server with URL:", error);
+          console.error('Background: Error updating server with URL:', error);
           if (sendResponse)
             sendResponse({ success: false, error: error.message });
         });
       return true; // Required to use sendResponse asynchronously
     }
 
-    if (message.type === "CAPTURE_SCREENSHOT" && message.tabId) {
+    if (message.type === 'CAPTURE_SCREENSHOT' && message.tabId) {
       // First get the server settings
-      chrome.storage.local.get(["browserConnectorSettings"], (result) => {
+      chrome.storage.local.get(['browserConnectorSettings'], (result) => {
         const settings = result.browserConnectorSettings || {
-          serverHost: "localhost",
+          serverHost: 'localhost',
           serverPort: 3025,
         };
 
@@ -51,12 +51,12 @@ export default defineBackground(() => {
           .then((isValid) => {
             if (!isValid) {
               console.error(
-                "Cannot capture screenshot: Not connected to a valid browser tools server"
+                'Cannot capture screenshot: Not connected to a valid browser tools server',
               );
               sendResponse({
                 success: false,
                 error:
-                  "Not connected to a valid browser tools server. Please check your connection settings.",
+                  'Not connected to a valid browser tools server. Please check your connection settings.',
               });
               return;
             }
@@ -65,10 +65,10 @@ export default defineBackground(() => {
             captureAndSendScreenshot(message, settings, sendResponse);
           })
           .catch((error) => {
-            console.error("Error validating server:", error);
+            console.error('Error validating server:', error);
             sendResponse({
               success: false,
-              error: "Failed to validate server identity: " + error.message,
+              error: 'Failed to validate server identity: ' + error.message,
             });
           });
       });
@@ -76,7 +76,7 @@ export default defineBackground(() => {
     }
 
     // Handle settings updates
-    if (message.type === "SETTINGS_UPDATED") {
+    if (message.type === 'SETTINGS_UPDATED') {
       console.log('Settings updated:', message.settings);
       // Handle settings update if needed
     }
@@ -97,14 +97,16 @@ export default defineBackground(() => {
       const identity = await response.json();
 
       // Validate the server signature
-      if (identity.signature !== "mcp-browser-connector-24x7") {
-        console.error("Invalid server signature - not the browser tools server");
+      if (identity.signature !== 'mcp-browser-connector-24x7') {
+        console.error(
+          'Invalid server signature - not the browser tools server',
+        );
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error("Error validating server identity:", error);
+      console.error('Error validating server identity:', error);
       return false;
     }
   }
@@ -126,12 +128,12 @@ export default defineBackground(() => {
   // Function to get the current URL for a tab
   async function getCurrentTabUrl(tabId: number) {
     try {
-      console.log("Background: Getting URL for tab", tabId);
+      console.log('Background: Getting URL for tab', tabId);
 
       // First check if we have it cached
       if (tabUrls.has(tabId)) {
         const cachedUrl = tabUrls.get(tabId);
-        console.log("Background: Found cached URL:", cachedUrl);
+        console.log('Background: Found cached URL:', cachedUrl);
         return cachedUrl;
       }
 
@@ -141,13 +143,13 @@ export default defineBackground(() => {
         if (tab && tab.url) {
           // Cache the URL
           tabUrls.set(tabId, tab.url);
-          console.log("Background: Got URL from tab:", tab.url);
+          console.log('Background: Got URL from tab:', tab.url);
           return tab.url;
         } else {
-          console.log("Background: Tab exists but no URL found");
+          console.log('Background: Tab exists but no URL found');
         }
       } catch (tabError) {
-        console.error("Background: Error getting tab:", tabError);
+        console.error('Background: Error getting tab:', tabError);
       }
 
       // If we can't get the tab directly, try querying for active tabs
@@ -158,19 +160,19 @@ export default defineBackground(() => {
         });
         if (tabs && tabs.length > 0 && tabs[0].url) {
           const activeUrl = tabs[0].url;
-          console.log("Background: Got URL from active tab:", activeUrl);
+          console.log('Background: Got URL from active tab:', activeUrl);
           // Cache this URL as well
           tabUrls.set(tabId, activeUrl);
           return activeUrl;
         }
       } catch (queryError) {
-        console.error("Background: Error querying tabs:", queryError);
+        console.error('Background: Error querying tabs:', queryError);
       }
 
-      console.log("Background: Could not find URL for tab", tabId);
+      console.log('Background: Could not find URL for tab', tabId);
       return null;
     } catch (error) {
-      console.error("Background: Error getting tab URL:", error);
+      console.error('Background: Error getting tab URL:', error);
       return null;
     }
   }
@@ -183,16 +185,16 @@ export default defineBackground(() => {
       tabUrls.set(tabId, changeInfo.url);
 
       // Send URL update to server if possible
-      updateServerWithUrl(tabId, changeInfo.url, "tab_url_change");
+      updateServerWithUrl(tabId, changeInfo.url, 'tab_url_change');
     }
 
     // Check if this is a page refresh (status becoming "complete")
-    if (changeInfo.status === "complete") {
+    if (changeInfo.status === 'complete') {
       // Update URL in our cache
       if (tab.url) {
         tabUrls.set(tabId, tab.url);
         // Send URL update to server if possible
-        updateServerWithUrl(tabId, tab.url, "page_complete");
+        updateServerWithUrl(tabId, tab.url, 'page_complete');
       }
 
       retestConnectionOnRefresh(tabId);
@@ -207,7 +209,7 @@ export default defineBackground(() => {
     // Get the URL of the newly activated tab
     chrome.tabs.get(tabId, (tab) => {
       if (chrome.runtime.lastError) {
-        console.error("Error getting tab info:", chrome.runtime.lastError);
+        console.error('Error getting tab info:', chrome.runtime.lastError);
         return;
       }
 
@@ -218,24 +220,28 @@ export default defineBackground(() => {
         tabUrls.set(tabId, tab.url);
 
         // Send URL update to server
-        updateServerWithUrl(tabId, tab.url, "tab_activated");
+        updateServerWithUrl(tabId, tab.url, 'tab_activated');
       }
     });
   });
 
   // Function to update the server with the current URL
-  async function updateServerWithUrl(tabId: number, url: string, source = "background_update") {
+  async function updateServerWithUrl(
+    tabId: number,
+    url: string,
+    source = 'background_update',
+  ) {
     if (!url) {
-      console.error("Cannot update server with empty URL");
+      console.error('Cannot update server with empty URL');
       return;
     }
 
     console.log(`Updating server with URL for tab ${tabId}: ${url}`);
 
     // Get the saved settings
-    chrome.storage.local.get(["browserConnectorSettings"], async (result) => {
+    chrome.storage.local.get(['browserConnectorSettings'], async (result) => {
       const settings = result.browserConnectorSettings || {
-        serverHost: "localhost",
+        serverHost: 'localhost',
         serverPort: 3025,
       };
 
@@ -251,13 +257,13 @@ export default defineBackground(() => {
           console.log(
             `Attempt ${
               retryCount + 1
-            }/${maxRetries} to update server with URL: ${url}`
+            }/${maxRetries} to update server with URL: ${url}`,
           );
 
           const response = await fetch(serverUrl, {
-            method: "POST",
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               url: url,
@@ -273,12 +279,12 @@ export default defineBackground(() => {
             const responseData = await response.json();
             console.log(
               `Successfully updated server with URL: ${url}`,
-              responseData
+              responseData,
             );
             success = true;
           } else {
             console.error(
-              `Server returned error: ${response.status} ${response.statusText}`
+              `Server returned error: ${response.status} ${response.statusText}`,
             );
             retryCount++;
             // Wait before retrying
@@ -294,7 +300,7 @@ export default defineBackground(() => {
 
       if (!success) {
         console.error(
-          `Failed to update server with URL after ${maxRetries} attempts`
+          `Failed to update server with URL after ${maxRetries} attempts`,
         );
       }
     });
@@ -310,21 +316,21 @@ export default defineBackground(() => {
     console.log(`Page refreshed in tab ${tabId}, retesting connection...`);
 
     // Get the saved settings
-    chrome.storage.local.get(["browserConnectorSettings"], async (result) => {
+    chrome.storage.local.get(['browserConnectorSettings'], async (result) => {
       const settings = result.browserConnectorSettings || {
-        serverHost: "localhost",
+        serverHost: 'localhost',
         serverPort: 3025,
       };
 
       // Test the connection with the last known host and port
       const isConnected = await validateServerIdentity(
         settings.serverHost,
-        settings.serverPort
+        settings.serverPort,
       );
 
       // Notify all devtools instances about the connection status
       chrome.runtime.sendMessage({
-        type: "CONNECTION_STATUS_UPDATE",
+        type: 'CONNECTION_STATUS_UPDATE',
         isConnected: isConnected,
         tabId: tabId,
       });
@@ -332,28 +338,32 @@ export default defineBackground(() => {
       // Always notify for page refresh, whether connected or not
       // This ensures any ongoing discovery is cancelled and restarted
       chrome.runtime.sendMessage({
-        type: "INITIATE_AUTO_DISCOVERY",
-        reason: "page_refresh",
+        type: 'INITIATE_AUTO_DISCOVERY',
+        reason: 'page_refresh',
         tabId: tabId,
         forceRestart: true, // Add a flag to indicate this should force restart any ongoing processes
       });
 
       if (!isConnected) {
         console.log(
-          "Connection test failed after page refresh, initiating auto-discovery..."
+          'Connection test failed after page refresh, initiating auto-discovery...',
         );
       } else {
-        console.log("Connection test successful after page refresh");
+        console.log('Connection test successful after page refresh');
       }
     });
   }
 
   // Function to capture and send screenshot
-  function captureAndSendScreenshot(message: any, settings: any, sendResponse: (response: any) => void) {
+  function captureAndSendScreenshot(
+    message: any,
+    settings: any,
+    sendResponse: (response: any) => void,
+  ) {
     // Get the inspected window's tab
-    chrome.tabs.get(message.tabId, (tab) => { 
-      if (chrome.runtime.lastError) { 
-        console.error("Error getting tab:", chrome.runtime.lastError);
+    chrome.tabs.get(message.tabId, (tab) => {
+      if (chrome.runtime.lastError) {
+        console.error('Error getting tab:', chrome.runtime.lastError);
         sendResponse({
           success: false,
           error: chrome.runtime.lastError.message,
@@ -364,14 +374,14 @@ export default defineBackground(() => {
       // Get all windows to find the one containing our tab
       chrome.windows.getAll({ populate: true }, (windows) => {
         const targetWindow = windows.find((w) =>
-          w.tabs?.some((t) => t.id === message.tabId)
+          w.tabs?.some((t) => t.id === message.tabId),
         );
 
         if (!targetWindow) {
-          console.error("Could not find window containing the inspected tab");
+          console.error('Could not find window containing the inspected tab');
           sendResponse({
             success: false,
-            error: "Could not find window containing the inspected tab",
+            error: 'Could not find window containing the inspected tab',
           });
           return;
         }
@@ -379,16 +389,16 @@ export default defineBackground(() => {
         // Capture screenshot of the window containing our tab
         chrome.tabs.captureVisibleTab(
           targetWindow.id!,
-          { format: "png" },
+          { format: 'png' },
           (dataUrl) => {
             // Ignore DevTools panel capture error if it occurs
             if (
               chrome.runtime.lastError &&
-              !(chrome.runtime.lastError.message || '').includes("devtools://")
+              !(chrome.runtime.lastError.message || '').includes('devtools://')
             ) {
               console.error(
-                "Error capturing screenshot:",
-                chrome.runtime.lastError
+                'Error capturing screenshot:',
+                chrome.runtime.lastError,
               );
               sendResponse({
                 success: false,
@@ -402,9 +412,9 @@ export default defineBackground(() => {
             console.log(`Sending screenshot to ${serverUrl}`);
 
             fetch(serverUrl, {
-              method: "POST",
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
               },
               body: JSON.stringify({
                 data: dataUrl,
@@ -414,26 +424,26 @@ export default defineBackground(() => {
               .then((response) => response.json())
               .then((result) => {
                 if (result.error) {
-                  console.error("Error from server:", result.error);
+                  console.error('Error from server:', result.error);
                   sendResponse({ success: false, error: result.error });
                 } else {
-                  console.log("Screenshot saved successfully:", result.path);
+                  console.log('Screenshot saved successfully:', result.path);
                   // Send success response even if DevTools capture failed
                   sendResponse({
                     success: true,
                     path: result.path,
-                    title: tab?.title || "Current Tab",
+                    title: tab?.title || 'Current Tab',
                   });
                 }
               })
               .catch((error) => {
-                console.error("Error sending screenshot data:", error);
+                console.error('Error sending screenshot data:', error);
                 sendResponse({
                   success: false,
-                  error: error.message || "Failed to save screenshot",
+                  error: error.message || 'Failed to save screenshot',
                 });
               });
-          }
+          },
         );
       });
     });

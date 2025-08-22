@@ -10,14 +10,14 @@ export default defineConfig({
       'tabs',
       'scripting',
       'storage',
-      "debugger",
-      "tabCapture",
-      "windows"
+      'debugger',
+      'tabCapture',
+      'windows',
     ],
     host_permissions: [
       'http://localhost/*',
       'https://localhost/*',
-      '*://*.google.com/*'
-    ]
-  }
+      '*://*.google.com/*',
+    ],
+  },
 });
