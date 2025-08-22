@@ -1,3 +1,4 @@
+/* @source cursor @line_count 174 @branch main*/
 <template>
   <div class="panel-container">
     <!-- Connect Component -->
@@ -5,7 +6,6 @@
       ref="connectRef"
       :settings="settings"
       @update:settings="updateSettings"
-    />
     />
 
     <!-- Settings Component -->
@@ -169,135 +169,5 @@ watch(
     sans-serif;
   background-color: #282828;
   color: #fff;
-}
-
-.endpoint-list {
-  margin: 16px 0;
-}
-
-.endpoint-item {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-  align-items: center;
-}
-
-.endpoint-form {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-  align-items: center;
-}
-
-button {
-  padding: 4px 8px;
-}
-
-input {
-  padding: 4px;
-}
-
-.status-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.status-connected {
-  background: #4caf50;
-}
-
-.status-disconnected {
-  background: #f44336;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 4px;
-}
-
-.checkbox-group {
-  margin-bottom: 8px;
-}
-
-.checkbox-group-2 {
-  margin-bottom: 6px;
-}
-
-input[type='number'],
-input[type='text'] {
-  padding: 4px;
-  width: 200px;
-}
-
-.settings-section {
-  border: 1px solid #ccc;
-  padding: 16px;
-  margin-bottom: 16px;
-  border-radius: 4px;
-}
-
-.settings-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  user-select: none;
-}
-
-.settings-header h3 {
-  margin: 0;
-}
-
-.settings-content {
-  display: none;
-  margin-top: 16px;
-}
-
-.settings-content.visible {
-  display: block;
-}
-
-.chevron {
-  width: 20px;
-  height: 20px;
-  transition: transform 0.3s ease;
-}
-
-.chevron.open {
-  transform: rotate(180deg);
-}
-
-.quick-actions {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.action-button {
-  background-color: #4a4a4a;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.action-button:hover {
-  background-color: #5a5a5a;
-}
-
-.action-button.danger {
-  background-color: #f44336;
-}
-
-.action-button.danger:hover {
-  background-color: #d32f2f;
 }
 </style>

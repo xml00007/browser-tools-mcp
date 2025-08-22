@@ -1,3 +1,4 @@
+/* @source cursor @line_count 331 @branch main*/
 <template>
   <div>
     <!-- Quick Actions Section -->
@@ -248,57 +249,6 @@ const wipeLogs = async () => {
 </script>
 
 <style scoped>
-.panel-container {
-  padding: 16px;
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
-  background-color: #282828;
-  color: #fff;
-}
-
-.endpoint-list {
-  margin: 16px 0;
-}
-
-.endpoint-item {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-  align-items: center;
-}
-
-.endpoint-form {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-  align-items: center;
-}
-
-button {
-  padding: 4px 8px;
-}
-
-input {
-  padding: 4px;
-}
-
-.status-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.status-connected {
-  background: #4caf50;
-}
-
-.status-disconnected {
-  background: #f44336;
-}
-
 .form-group {
   margin-bottom: 16px;
 }
@@ -306,14 +256,6 @@ input {
 .form-group label {
   display: block;
   margin-bottom: 4px;
-}
-
-.checkbox-group {
-  margin-bottom: 8px;
-}
-
-.checkbox-group-2 {
-  margin-bottom: 6px;
 }
 
 input[type='number'],
