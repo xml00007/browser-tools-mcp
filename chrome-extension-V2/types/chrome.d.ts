@@ -6,4 +6,4 @@ declare global {
   // This file can be used for any additional type extensions if needed
 }
 
-export {};
+export {}

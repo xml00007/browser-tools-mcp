@@ -1,4 +1,4 @@
-import { defineConfig } from 'wxt';
+import { defineConfig } from 'wxt'
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -13,9 +13,12 @@ export default defineConfig({
       'debugger',
       'tabCapture',
       'windows',
+      'webRequest',
+      'sidePanel',
     ],
-    host_permissions: [
-      '<all_urls>',
-    ],
+    host_permissions: ['<all_urls>'],
+    // side_panel: {
+    //   default_path: 'sidepanel.html',
+    // },
   },
-});
+})

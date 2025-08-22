@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import RequestList from '../../components/RequestList.vue'
+import { useConnection } from '../../composables/useConnection'
+import Connect from './Connect.vue'
+import Setting from './Setting.vue'
+
+// Initialize the connection composable to activate the listeners
+useConnection()
+</script>
+
 <template>
   <div class="panel-container">
     <!-- Connect Component -->
@@ -5,17 +15,11 @@
 
     <!-- Settings Component -->
     <Setting />
+
+    <!-- Request List Component -->
+    <RequestList />
   </div>
 </template>
-
-<script setup lang="ts">
-import Connect from './Connect.vue';
-import Setting from './Setting.vue';
-import { useConnection } from '../../composables/useConnection';
-
-// Initialize the connection composable to activate the listeners
-useConnection();
-</script>
 
 <style scoped>
 .panel-container {

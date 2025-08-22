@@ -1,4 +1,4 @@
-import { reactive, watch, onMounted } from 'vue';
+import { onMounted, reactive, watch } from 'vue'
 
 // Define the settings object with default values
 const settings = reactive({
@@ -12,53 +12,69 @@ const settings = reactive({
   serverHost: 'localhost',
   serverPort: 3025,
   allowAutoPaste: true,
-});
+})
+
+interface Settings {
+  logLimit: number
+  queryLimit: number
+  stringSizeLimit: number
+  showRequestHeaders: boolean
+  showResponseHeaders: boolean
+  maxLogSize: number
+  screenshotPath: string
+  serverHost: string
+  serverPort: number
+  allowAutoPaste: boolean
+}
 
 // Function to save settings to chrome storage
-const saveSettings = () => {
+function saveSettings() {
   if (typeof chrome !== 'undefined' && chrome?.storage) {
-    chrome.storage.local.set({ browserConnectorSettings: { ...settings } });
+    chrome.storage.local.set({ browserConnectorSettings: { ...settings } })
     // Notify background script about settings change
     chrome.runtime.sendMessage({
       type: 'SETTINGS_UPDATED',
       settings: { ...settings },
-    });
+    })
   }
-};
+}
 
 // Function to load settings from chrome storage
-const loadSettings = () => {
+function loadSettings() {
   if (typeof chrome !== 'undefined' && chrome?.storage) {
-    chrome.storage.local.get(['browserConnectorSettings'], (result: any) => {
-      if (result.browserConnectorSettings) {
-        Object.assign(settings, result.browserConnectorSettings);
-      }
-    });
+    chrome.storage.local.get(
+      ['browserConnectorSettings'],
+      (result: { browserConnectorSettings?: Partial<Settings> }) => {
+        if (result.browserConnectorSettings) {
+          Object.assign(settings, result.browserConnectorSettings)
+        }
+      },
+    )
   }
-};
+}
 
 // Watch for settings changes and save them
 watch(
   settings,
   () => {
-    saveSettings();
+    saveSettings()
   },
   { deep: true },
-);
+)
 
 // The composable function
 export function useSettings() {
   // Load settings when the composable is first used
   onMounted(() => {
-    loadSettings();
-  });
+    loadSettings()
+  })
 
-  const updateSettings = (newSettings: any) => {
-    Object.assign(settings, newSettings);
-  };
+  const updateSettings = (newSettings: Partial<Settings>) => {
+    Object.assign(settings, newSettings)
+  }
 
   return {
     settings,
     updateSettings,
-  };
+  }
 }

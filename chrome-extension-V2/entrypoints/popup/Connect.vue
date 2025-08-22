@@ -1,3 +1,27 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import SettingsSection from '../../components/SettingsSection.vue'
+import { useConnection } from '../../composables/useConnection'
+
+const {
+  settings,
+  updateSettings,
+  connectionStatus,
+  discoverServer,
+  testConnection,
+} = useConnection()
+
+const serverHost = computed({
+  get: () => settings.serverHost,
+  set: (value: string) => updateSettings({ ...settings, serverHost: value }),
+})
+
+const serverPort = computed({
+  get: () => settings.serverPort,
+  set: (value: number) => updateSettings({ ...settings, serverPort: value }),
+})
+</script>
+
 <template>
   <SettingsSection title="Server Connection Settings">
     <div class="form-group">
@@ -7,7 +31,7 @@
         v-model="serverHost"
         type="text"
         placeholder="localhost or IP address"
-      />
+      >
     </div>
     <div class="form-group">
       <label for="server-port">Server Port</label>
@@ -17,20 +41,28 @@
         type="number"
         min="1"
         max="65535"
-      />
+      >
     </div>
     <div class="quick-actions">
-      <button class="action-button" @click="() => discoverServer()">
+      <button
+        class="action-button"
+        @click="() => discoverServer()"
+      >
         Auto-Discover Server
       </button>
-      <button class="action-button" @click="() => testConnection()">
+      <button
+        class="action-button"
+        @click="() => testConnection()"
+      >
         Test Connection
       </button>
     </div>
-    <div v-if="connectionStatus.show" style="margin-top: 8px">
+    <div
+      v-if="connectionStatus.show"
+      style="margin-top: 8px"
+    >
       <span
-        :class="[
-          'status-indicator',
+        class="status-indicator" :class="[
           connectionStatus.connected
             ? 'status-connected'
             : 'status-disconnected',
@@ -40,32 +72,6 @@
     </div>
   </SettingsSection>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue';
-import SettingsSection from '../../components/SettingsSection.vue';
-import { useConnection } from '../../composables/useConnection';
-
-const {
-  settings,
-  updateSettings,
-  connectionStatus,
-  discoverServer,
-  testConnection,
-} = useConnection();
-
-const serverHost = computed({
-  get: () => settings.serverHost,
-  set: (value: string) =>
-    updateSettings({ ...settings, serverHost: value }),
-});
-
-const serverPort = computed({
-  get: () => settings.serverPort,
-  set: (value: number) =>
-    updateSettings({ ...settings, serverPort: value }),
-});
-</script>
 
 <style scoped>
 .status-indicator {

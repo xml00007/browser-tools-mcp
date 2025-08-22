@@ -1,31 +1,5 @@
-<template>
-  <div class="settings-section">
-    <div v-if="title" class="settings-header" @click="toggleVisibility">
-      <h3>{{ title }}</h3>
-      <svg
-        v-if="collapsible"
-        :class="['chevron', { open: isContentVisible }]"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <polyline points="6 9 12 15 18 9" />
-      </svg>
-    </div>
-    <div
-      v-show="isContentVisible"
-      :class="['settings-content', { visible: isContentVisible }]"
-    >
-      <slot />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 const props = defineProps({
   title: {
@@ -40,16 +14,45 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-});
+})
 
-const isContentVisible = ref(props.startOpen);
+const isContentVisible = ref(props.startOpen)
 
-const toggleVisibility = () => {
+function toggleVisibility() {
   if (props.collapsible) {
-    isContentVisible.value = !isContentVisible.value;
+    isContentVisible.value = !isContentVisible.value
   }
-};
+}
 </script>
+
+<template>
+  <div class="settings-section">
+    <div
+      v-if="title"
+      class="settings-header" @click="toggleVisibility"
+    >
+      <h3>{{ title }}</h3>
+      <svg
+        v-if="collapsible"
+        class="chevron" :class="[{ open: isContentVisible }]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </div>
+    <div
+      v-show="isContentVisible"
+      class="settings-content" :class="[{ visible: isContentVisible }]"
+    >
+      <slot />
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .settings-section {
