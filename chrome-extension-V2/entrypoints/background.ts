@@ -268,8 +268,7 @@ export default defineBackground(() => {
           // Send the URL to the server
           const serverUrl = `http://${settings.serverHost}:${settings.serverPort}/current-url`
           console.log(
-            `Attempt ${
-              retryCount + 1
+            `Attempt ${retryCount + 1
             }/${maxRetries} to update server with URL: ${url}`,
           )
 
@@ -514,8 +513,14 @@ export default defineBackground(() => {
     params: Record<string, unknown>,
   ) {
     const tabId = source.tabId
+
     if (!debuggees[tabId])
       return
+
+    const browserUrl = tabUrls.get(tabId)
+    if (!browserUrl)
+      return
+    const browserOrigin = new globalThis.URL(browserUrl).origin
 
     if (method === 'Network.requestWillBeSent') {
       const request = params.request
@@ -540,10 +545,15 @@ export default defineBackground(() => {
               return
             }
             const requestData = requests[requestId]
+            const { origin, pathname } = new globalThis.URL(requestData.request.url)
+            if (origin !== browserOrigin) {
+              delete requests[requestId]
+              return
+            }
             const entry = {
               type: 'network-request',
-              origin: new globalThis.URL(requestData.request.url).origin,
-              path: new globalThis.URL(requestData.request.url).pathname,
+              origin,
+              path: pathname,
               method: requestData.request.method,
               requestBody: requestData.request.postData ?? '',
               requestCookies: requestData.request.cookies ?? [],

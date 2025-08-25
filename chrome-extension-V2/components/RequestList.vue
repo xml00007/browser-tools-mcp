@@ -103,9 +103,9 @@ onMounted(() => {
     <ul>
       <li v-for="(request, index) in requests" :key="index">
         <div class="request-summary" @click="toggleDetails(index)">
-          <span>{{ request.method }}</span>
-          <span>{{ request.responseStatus }}</span>
-          <span class="url">{{ request.origin }}{{ request.path }}</span>
+          <span style="flex: 0.15;">{{ request.method }}</span>
+          <span style="flex: 0.15;">{{ request.responseStatus }}</span>
+          <span class="url" style="flex: 1;">{{ request.origin }}{{ request.path }}</span>
         </div>
         <div v-if="selectedIndex === index" class="request-details">
           <h4>Request Headers</h4>
@@ -138,15 +138,15 @@ li {
 
 .request-summary {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   cursor: pointer;
 }
 
 .url {
-  white-space: nowrap;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  white-space: nowrap;
 }
 
 span {
