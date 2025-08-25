@@ -4,8 +4,7 @@ import { defineConfig } from 'wxt'
 export default defineConfig({
   modules: ['@wxt-dev/module-vue'],
   manifest: {
-    permissions: [
-      'activeTab',
+    permissions: ['activeTab',
       'downloads',
       'tabs',
       'scripting',
@@ -14,8 +13,13 @@ export default defineConfig({
       'tabCapture',
       'windows',
       'webRequest',
-      'sidePanel',
-    ],
+      'sidePanel',],
+    action: {
+      default_title: 'Browser Tools',
+    },
+    side_panel: {
+      default_path: 'sidePanel.html',
+    },
     host_permissions: ['<all_urls>'],
     // side_panel: {
     //   default_path: 'sidepanel.html',
