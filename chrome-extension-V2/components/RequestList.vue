@@ -16,6 +16,44 @@ interface RequestData {
 
 const requests = ref<RequestData[]>([])
 const selectedIndex = ref<number | null>(null)
+const isDebugging = ref(false)
+
+async function getCurrentTabId() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+  return tab?.id
+}
+
+async function startDebugger() {
+  const tabId = await getCurrentTabId()
+  if (tabId) {
+    chrome.runtime.sendMessage({ type: 'START_DEBUGGER', tabId }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError.message)
+        return
+      }
+      if (response.success) {
+        isDebugging.value = true
+        console.log('Debugger started')
+      }
+    })
+  }
+}
+
+async function stopDebugger() {
+  const tabId = await getCurrentTabId()
+  if (tabId) {
+    chrome.runtime.sendMessage({ type: 'STOP_DEBUGGER', tabId }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError.message)
+        return
+      }
+      if (response.success) {
+        isDebugging.value = false
+        console.log('Debugger stopped')
+      }
+    })
+  }
+}
 
 function loadRequests() {
   chrome.storage.local.get('requests', (data) => {
@@ -26,10 +64,14 @@ function loadRequests() {
 function toggleDetails(index: number) {
   if (selectedIndex.value === index) {
     selectedIndex.value = null
-  }
-  else {
+  } else {
     selectedIndex.value = index
   }
+}
+
+function cleanRequests() {
+  chrome.storage.local.set({ requests: [] })
+  requests.value = []
 }
 
 onMounted(() => {
@@ -45,26 +87,26 @@ onMounted(() => {
 <template>
   <div>
     <h3>HTTP Requests</h3>
-    <button @click="loadRequests">
+    <button @click="startDebugger" :disabled="isDebugging" style="margin-right: 10px;">
+      Start Listening
+    </button>
+    <button @click="stopDebugger" :disabled="!isDebugging" style="margin-right: 10px;">
+      Stop Listening
+    </button>
+    <button @click="loadRequests" style="margin-right: 10px;">
       Refresh
     </button>
+    <button @click="cleanRequests">
+      Clean
+    </button>
     <ul>
-      <li
-        v-for="(request, index) in requests"
-        :key="index"
-      >
-        <div
-          class="request-summary"
-          @click="toggleDetails(index)"
-        >
+      <li v-for="(request, index) in requests" :key="index">
+        <div class="request-summary" @click="toggleDetails(index)">
           <span>{{ request.method }}</span>
           <span>{{ request.responseStatus }}</span>
           <span class="url">{{ request.origin }}{{ request.path }}</span>
         </div>
-        <div
-          v-if="selectedIndex === index"
-          class="request-details"
-        >
+        <div v-if="selectedIndex === index" class="request-details">
           <h4>Request Headers</h4>
           <pre>{{ request.requestHeaders }}</pre>
           <h4>Request Body</h4>
@@ -87,27 +129,33 @@ ul {
   max-height: 300px;
   overflow-y: auto;
 }
+
 li {
   padding: 4px 0;
   border-bottom: 1px solid #444;
 }
+
 .request-summary {
   display: flex;
   justify-content: space-between;
   cursor: pointer;
 }
+
 .url {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
 }
+
 span {
   font-size: 12px;
 }
+
 .request-details {
   margin-top: 8px;
 }
+
 pre {
   white-space: pre-wrap;
   word-break: break-all;

@@ -95,27 +95,16 @@ async function wipeLogs() {
   <div>
     <SettingsSection title="Quick Actions">
       <div class="quick-actions">
-        <button
-          class="action-button"
-          @click="captureScreenshot"
-        >
+        <button class="action-button" @click="captureScreenshot">
           Capture Screenshot
         </button>
-        <button
-          class="action-button danger"
-          @click="wipeLogs"
-        >
+        <button class="action-button danger" @click="wipeLogs">
           Wipe All Logs
         </button>
       </div>
-      <div
-        class="checkbox-group-2"
-        style="margin-top: 10px; display: flex; align-items: center"
-      >
+      <div class="checkbox-group-2" style="margin-top: 10px; display: flex; align-items: center">
         <label>
-          <input
-            v-model="allowAutoPaste" type="checkbox"
-          >
+          <input v-model="allowAutoPaste" type="checkbox">
           Allow Auto-paste to Cursor
         </label>
       </div>
@@ -127,63 +116,36 @@ async function wipeLogs() {
           Provide a directory to save screenshots to (by default screenshots
           will be saved to your downloads folder if no path is provided)
         </label>
-        <input
-          id="screenshot-path"
-          v-model="screenshotPath"
-          type="text"
-          placeholder="/path/to/screenshots"
-        >
+        <input id="screenshot-path" v-model="screenshotPath" type="text" placeholder="/path/to/screenshots">
       </div>
     </SettingsSection>
 
-    <SettingsSection
-      title="Advanced Settings"
-      :collapsible="true"
-      :start-open="false"
-    >
+    <SettingsSection title="Advanced Settings" :collapsible="true" :start-open="false">
       <div class="form-group">
         <label for="log-limit">Log Limit (number of logs)</label>
-        <input
-          id="log-limit" v-model="logLimit" type="number" min="1"
-        >
+        <input id="log-limit" v-model="logLimit" type="number" min="1">
       </div>
       <div class="form-group">
         <label for="query-limit">Query Limit (characters)</label>
-        <input
-          id="query-limit" v-model="queryLimit" type="number" min="1"
-        >
+        <input id="query-limit" v-model="queryLimit" type="number" min="1">
       </div>
       <div class="form-group">
         <label for="string-size-limit">String Size Limit (characters)</label>
-        <input
-          id="string-size-limit"
-          v-model="stringSizeLimit"
-          type="number"
-          min="1"
-        >
+        <input id="string-size-limit" v-model="stringSizeLimit" type="number" min="1">
       </div>
       <div class="form-group">
         <label for="max-log-size">Max Log Size (characters)</label>
-        <input
-          id="max-log-size"
-          v-model="maxLogSize"
-          type="number"
-          min="1000"
-        >
+        <input id="max-log-size" v-model="maxLogSize" type="number" min="1000">
       </div>
       <div class="checkbox-group">
         <label>
-          <input
-            v-model="showRequestHeaders" type="checkbox"
-          >
+          <input v-model="showRequestHeaders" type="checkbox">
           Include Request Headers
         </label>
       </div>
       <div class="checkbox-group">
         <label>
-          <input
-            v-model="showResponseHeaders" type="checkbox"
-          >
+          <input v-model="showResponseHeaders" type="checkbox">
           Include Response Headers
         </label>
       </div>
@@ -197,6 +159,7 @@ async function wipeLogs() {
   gap: 8px;
   margin-bottom: 16px;
 }
+
 .action-button {
   background-color: #4a4a4a;
   color: white;
@@ -206,27 +169,34 @@ async function wipeLogs() {
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
 .action-button:hover {
   background-color: #5a5a5a;
 }
+
 .action-button.danger {
   background-color: #f44336;
 }
+
 .action-button.danger:hover {
   background-color: #d32f2f;
 }
+
 .form-group {
   margin-bottom: 16px;
 }
+
 .form-group label {
   display: block;
   margin-bottom: 4px;
 }
+
 input[type='text'],
 input[type='number'] {
   padding: 4px;
   width: 200px;
 }
+
 .checkbox-group {
   margin-bottom: 16px;
 }

@@ -11,10 +11,10 @@ useConnection()
 <template>
   <div class="panel-container">
     <!-- Connect Component -->
-    <Connect />
+    <!-- <Connect /> -->
 
     <!-- Settings Component -->
-    <Setting />
+    <!-- <Setting /> -->
 
     <!-- Request List Component -->
     <RequestList />
