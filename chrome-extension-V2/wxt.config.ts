@@ -9,16 +9,7 @@ export default defineConfig({
     },
   },
   manifest: {
-    permissions: ['activeTab',
-      'downloads',
-      'tabs',
-      'scripting',
-      'storage',
-      'debugger',
-      'tabCapture',
-      'windows',
-      'webRequest',
-      'sidePanel',],
+    permissions: ['activeTab', 'downloads', 'tabs', 'scripting', 'storage', 'debugger', 'tabCapture', 'windows', 'webRequest', 'sidePanel'],
     action: {
       default_title: 'Browser Tools',
     },

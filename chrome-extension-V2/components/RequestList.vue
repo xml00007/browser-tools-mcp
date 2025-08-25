@@ -64,7 +64,8 @@ function loadRequests() {
 function toggleDetails(index: number) {
   if (selectedIndex.value === index) {
     selectedIndex.value = null
-  } else {
+  }
+  else {
     selectedIndex.value = index
   }
 }
@@ -87,13 +88,13 @@ onMounted(() => {
 <template>
   <div>
     <h3>HTTP Requests</h3>
-    <button @click="startDebugger" :disabled="isDebugging" style="margin-right: 10px;">
+    <button :disabled="isDebugging" style="margin-right: 10px;" @click="startDebugger">
       Start Listening
     </button>
-    <button @click="stopDebugger" :disabled="!isDebugging" style="margin-right: 10px;">
+    <button :disabled="!isDebugging" style="margin-right: 10px;" @click="stopDebugger">
       Stop Listening
     </button>
-    <button @click="loadRequests" style="margin-right: 10px;">
+    <button style="margin-right: 10px;" @click="loadRequests">
       Refresh
     </button>
     <button @click="cleanRequests">

@@ -92,7 +92,7 @@ async function wipeLogs() {
 </script>
 
 <template>
-  <div> 
+  <div>
     <SettingsSection title="Quick Actions">
       <div class="quick-actions">
         <button class="action-button" @click="captureScreenshot">
