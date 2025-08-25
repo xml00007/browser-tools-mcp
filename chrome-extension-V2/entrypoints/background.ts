@@ -1,3 +1,17 @@
+function getCurrentUrlParams(url:string,paramName:string) {
+  const params = new URLSearchParams(url.split('?')[1]);
+  
+  if (paramName) {
+      return params.get(paramName);
+  }
+  
+  const result: Record<string, string> = {};
+  for (const [key, value] of params.entries()) {
+      result[key] = value;
+  }
+  return result;
+}
+
 export default defineBackground(() => {
   console.log('Hello background!', { id: browser.runtime.id })
 
@@ -517,14 +531,10 @@ export default defineBackground(() => {
     if (!debuggees[tabId])
       return
 
-    const browserUrl = tabUrls.get(tabId)
-    if (!browserUrl)
-      return
-    const browserOrigin = new globalThis.URL(browserUrl).origin
-
     if (method === 'Network.requestWillBeSent') {
-      const request = params.request
-      requests[params.requestId] = { request }
+      console.log('requestWillBeSent', params)
+      const { type, request, documentURL,requestId } = params
+      requests[requestId] = { request, type, documentURL }
     }
     else if (method === 'Network.responseReceived') {
       const requestId = params.requestId
@@ -546,16 +556,23 @@ export default defineBackground(() => {
             }
             const requestData = requests[requestId]
             const { origin, pathname } = new globalThis.URL(requestData.request.url)
-            if (origin !== browserOrigin) {
+            const { origin: documentOrigin } = new globalThis.URL(requestData.documentURL)
+            if (origin !== documentOrigin || requestData.type !== 'XHR') {
               delete requests[requestId]
               return
+            }
+            console.log('pathname', pathname, requestData)
+            const method = requestData.request.method
+            let requestBody = requestData.request.postData ?? ''
+            if (method === 'GET') {
+              requestBody = JSON.stringify(getCurrentUrlParams(requestData.request.url, ''))
             }
             const entry = {
               type: 'network-request',
               origin,
               path: pathname,
-              method: requestData.request.method,
-              requestBody: requestData.request.postData ?? '',
+              method,
+              requestBody,
               requestCookies: requestData.request.cookies ?? [],
               requestHeaders: requestData.request.headers ?? {},
               responseStatus: requestData.response.status,

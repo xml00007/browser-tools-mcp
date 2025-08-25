@@ -108,12 +108,12 @@ onMounted(() => {
           <span class="url" style="flex: 1;">{{ request.origin }}{{ request.path }}</span>
         </div>
         <div v-if="selectedIndex === index" class="request-details">
-          <h4>Request Headers</h4>
-          <pre>{{ request.requestHeaders }}</pre>
+          <!-- <h4>Request Headers</h4>
+          <pre>{{ request.requestHeaders }}</pre> -->
           <h4>Request Body</h4>
           <pre>{{ request.requestBody }}</pre>
-          <h4>Response Headers</h4>
-          <pre>{{ request.responseHeaders }}</pre>
+          <!-- <h4>Response Headers</h4>
+          <pre>{{ request.responseHeaders }}</pre> -->
           <h4>Response Body</h4>
           <pre>{{ request.responseBody }}</pre>
         </div>
