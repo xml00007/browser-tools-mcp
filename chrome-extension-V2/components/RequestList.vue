@@ -179,8 +179,8 @@ ul {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: max-content;
-  overflow-y: auto;
+  /* max-height: 100%; */
+  /* overflow-y: auto; */
 }
 
 li {

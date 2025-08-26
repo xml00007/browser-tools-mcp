@@ -15,6 +15,7 @@ const settings = reactive<BrowserConnectorSettings>({
   serverHost: 'localhost',
   serverPort: 3025,
   allowAutoPaste: true,
+  showDataQuery: false,
 })
 
 // Function to save settings to chrome storage

@@ -33,7 +33,7 @@ export function useDataQuery() {
   // Save settings to localStorage when they change
   watch(settings, (newSettings) => {
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('dataQuerySettings', JSON.stringify(newSettings))
+      // localStorage.setItem('dataQuerySettings', JSON.stringify(newSettings))
     }
   }, { deep: true })
 
@@ -41,11 +41,11 @@ export function useDataQuery() {
   const loadSettings = () => {
     if (typeof localStorage !== 'undefined') {
       try {
-        const stored = localStorage.getItem('dataQuerySettings')
-        if (stored) {
-          const parsed = JSON.parse(stored)
-          Object.assign(settings, parsed)
-        }
+        // const stored = localStorage.getItem('dataQuerySettings')
+        // if (stored) {
+        //   const parsed = JSON.parse(stored)
+        //   Object.assign(settings, parsed)
+        // }
       } catch (error) {
         console.error('Failed to load data query settings:', error)
       }

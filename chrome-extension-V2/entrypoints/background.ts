@@ -229,6 +229,20 @@ export default defineBackground(() => {
     const tabId = activeInfo.tabId
     console.log(`Tab activated: ${tabId}`)
 
+    // If a debugger is attached to a tab, move it to the new active tab.
+    const currentlyDebuggedTabId = Object.keys(debuggees).find(
+      key => debuggees[key] === 'attached',
+    )
+
+    if (currentlyDebuggedTabId) {
+      const oldTabId = parseInt(currentlyDebuggedTabId, 10)
+      if (oldTabId !== tabId) {
+        console.log(`Switching debugger from tab ${oldTabId} to ${tabId}`)
+        detach(oldTabId)
+        attach(tabId)
+      }
+    }
+
     // Get the URL of the newly activated tab
     chrome.tabs.get(tabId, (tab) => {
       if (chrome.runtime.lastError) {

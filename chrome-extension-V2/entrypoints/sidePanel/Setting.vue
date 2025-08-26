@@ -44,11 +44,17 @@ const showRequestHeaders = computed({
     updateSettings({ ...settings, showRequestHeaders: value }),
 })
 
-const showResponseHeaders = computed({
-  get: () => settings.showResponseHeaders,
-  set: (value: boolean) =>
-    updateSettings({ ...settings, showResponseHeaders: value }),
-})
+  const showResponseHeaders = computed({
+    get: () => settings.showResponseHeaders,
+    set: (value: boolean) =>
+      updateSettings({ ...settings, showResponseHeaders: value }),
+  })
+
+  const showDataQuery = computed({
+    get: () => settings.showDataQuery,
+    set: (value: boolean) =>
+      updateSettings({ ...settings, showDataQuery: value }),
+  })
 
 async function captureScreenshot() {
   try {
@@ -110,17 +116,13 @@ async function wipeLogs() {
       </div>
     </SettingsSection>
 
-    <SettingsSection title="Screenshot Settings">
+    <SettingsSection title="Advanced Settings" :collapsible="true" :start-open="false">
       <div class="form-group">
         <label for="screenshot-path">
-          Provide a directory to save screenshots to (by default screenshots
-          will be saved to your downloads folder if no path is provided)
+          截图保存路径
         </label>
         <input id="screenshot-path" v-model="screenshotPath" type="text" placeholder="/path/to/screenshots">
       </div>
-    </SettingsSection>
-
-    <SettingsSection title="Advanced Settings" :collapsible="true" :start-open="false">
       <div class="form-group">
         <label for="log-limit">Log Limit (number of logs)</label>
         <input id="log-limit" v-model="logLimit" type="number" min="1">
@@ -147,6 +149,12 @@ async function wipeLogs() {
         <label>
           <input v-model="showResponseHeaders" type="checkbox">
           Include Response Headers
+        </label>
+      </div>
+      <div class="checkbox-group">
+        <label>
+          <input v-model="showDataQuery" type="checkbox">
+          数据请求分析
         </label>
       </div>
     </SettingsSection>
@@ -187,7 +195,8 @@ async function wipeLogs() {
 }
 
 .form-group label {
-  display: block;
+  display:inline-block;
+  width: 160px;
   margin-bottom: 4px;
 }
 

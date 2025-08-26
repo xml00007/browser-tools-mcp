@@ -26,6 +26,7 @@ declare global {
     serverHost: string
     serverPort: number
     allowAutoPaste: boolean
+    showDataQuery: boolean
   }
 }
 
