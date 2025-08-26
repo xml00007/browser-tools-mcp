@@ -32,4 +32,4 @@ stats-*.json
 *.sln
 *.sw?
 .output/*
-
+DS_Store

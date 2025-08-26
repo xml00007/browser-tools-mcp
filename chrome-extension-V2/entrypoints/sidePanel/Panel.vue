@@ -16,12 +16,12 @@ useConnection()
     <!-- <Connect /> -->
 
     <!-- Settings Component -->
-    <!-- <Setting /> -->
+    <Setting />
 
     <!-- Request List Component -->
     <RequestList />
     
-    <DataQuery />
+    <DataQuery  />
   </div>
 </template>
 

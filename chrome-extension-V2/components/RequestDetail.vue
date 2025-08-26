@@ -36,20 +36,17 @@
       </div>
 
       <!-- Request Body -->
-      <div class="section">
+      <div class="section" v-if="request.requestBody">
         <details open>
           <summary class="section-header-inline">
             <h4>请求体</h4>
-            <div class="header-actions" v-if="request.requestBody">
+            <div class="header-actions" >
               <button @click.prevent="formatRequestBody" class="format-btn">格式化</button>
               <button @click.prevent="copyToClipboard(request.requestBody)" class="copy-btn">复制</button>
             </div>
           </summary>
           <div class="body-content">
-            <div v-if="!request.requestBody" class="empty-body">
-              <p>无请求体数据</p>
-            </div>
-            <div v-else class="body-data">
+            <div class="body-data">
               <pre class="body-pre">{{ formattedRequestBody }}</pre>
             </div>
           </div>
@@ -72,20 +69,17 @@
       </div> -->
 
       <!-- Response Body -->
-      <div class="section">
+      <div class="section" v-if="request.responseBody">
         <details open>
           <summary class="section-header-inline">
             <h4>响应体</h4>
-            <div class="header-actions" v-if="request.responseBody">
+            <div class="header-actions" >
               <button @click.prevent="formatResponseBody" class="format-btn">格式化</button>
               <button @click.prevent="copyToClipboard(request.responseBody)" class="copy-btn">复制</button>
             </div>
           </summary>
           <div class="body-content">
-            <div v-if="!request.responseBody" class="empty-body">
-              <p>无响应体数据</p>
-            </div>
-            <div v-else class="body-data">
+            <div class="body-data">
               <pre class="body-pre">{{ formattedResponseBody }}</pre>
             </div>
           </div>
@@ -390,15 +384,15 @@ watch(() => props.request, () => {
 }
 
 .body-content {
-  padding: 10px;
-  padding-left: 20px;
+  /* padding: 10px;
+  padding-left: 20px; */
 }
 
 .empty-body {
   text-align: center;
   color: #888888;
   font-style: italic;
-  padding: 12px;
+  padding: 0;
 }
 
 .body-data {

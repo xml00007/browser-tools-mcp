@@ -532,7 +532,6 @@ export default defineBackground(() => {
       return
 
     if (method === 'Network.requestWillBeSent') {
-      console.log('requestWillBeSent', params)
       const { type, request, documentURL,requestId } = params
       requests[requestId] = { request, type, documentURL }
     }
@@ -567,6 +566,11 @@ export default defineBackground(() => {
             if (method === 'GET') {
               requestBody = JSON.stringify(getCurrentUrlParams(requestData.request.url, ''))
             }
+            if(pathname==='/api/bcrm/support/msgCenter/queryMsgCount') {
+              return
+            }
+            const res = responseBody ? responseBody.body : ''
+            const resJson = res ? JSON.parse(res) : {}
             const entry = {
               type: 'network-request',
               origin,
@@ -575,9 +579,9 @@ export default defineBackground(() => {
               requestBody,
               requestCookies: requestData.request.cookies ?? [],
               requestHeaders: requestData.request.headers ?? {},
-              responseStatus: requestData.response.status,
+              responseStatus: resJson.code|| resJson.status,
               responseHeaders: requestData.response.headers ?? {},
-              responseBody: responseBody ? responseBody.body : '',
+              responseBody:res,
             }
 
             chrome.storage.local.get('requests', (data) => {
