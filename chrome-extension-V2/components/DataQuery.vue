@@ -1,6 +1,6 @@
-<!-- @source cursor @line_count 128 @branch main -->
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch, onMounted } from 'vue'
+import { useDataQuery } from '../composables/useDataQuery'
 
 // Types
 interface LogEntry {
@@ -15,6 +15,9 @@ interface FoundResult {
   page: number
   itemId: any
 }
+
+// Use the data query composable to get shared state
+const { settings, listUrl, detailUrl, extractBaseUrl } = useDataQuery()
 
 // Form data
 const formData = reactive({
@@ -40,6 +43,32 @@ const addLog = (message: string, type = 'info') => {
     type
   })
 }
+
+// Watch for changes in useDataQuery settings and update form data
+watch([listUrl, detailUrl], ([newListUrl, newDetailUrl]) => {
+  if (newListUrl && newListUrl !== formData.listUrl) {
+    formData.listUrl = extractBaseUrl(settings.list)
+    addLog(`已自动填入列表接口: ${formData.listUrl}`, 'info')
+  }
+  if (newDetailUrl && newDetailUrl !== formData.detailUrl) {
+    formData.detailUrl = extractBaseUrl(settings.detail)
+    addLog(`已自动填入详情接口: ${formData.detailUrl}`, 'info')
+  }
+}, { immediate: true })
+
+// Watch for settings changes to update URLs
+watch(() => settings.list, (newList) => {
+  if (newList) {
+    formData.listUrl = extractBaseUrl(newList)
+  }
+}, { immediate: true })
+
+watch(() => settings.detail, (newDetail) => {
+  if (newDetail) {
+    formData.detailUrl = extractBaseUrl(newDetail)
+  }
+}, { immediate: true })
+
 
 // Clear logs
 const clearLogs = () => {
@@ -216,6 +245,21 @@ const stopSearch = () => {
   <div class="data-query-container">
     <h3>数据查询工具</h3>
     
+    <!-- Current Settings Status -->
+    <!-- <div v-if="settings.list || settings.detail" class="settings-status">
+      <h4>当前接口设置</h4>
+      <div v-if="settings.list" class="interface-info">
+        <span class="interface-label">列表接口:</span>
+        <span class="interface-url">{{ extractBaseUrl(settings.list) }}</span>
+        <span class="interface-method">{{ settings.list.method }}</span>
+      </div>
+      <div v-if="settings.detail" class="interface-info">
+        <span class="interface-label">详情接口:</span>
+        <span class="interface-url">{{ extractBaseUrl(settings.detail) }}</span>
+        <span class="interface-method">{{ settings.detail.method }}</span>
+      </div>
+    </div> -->
+    
     <!-- Search Form -->
     <div class="form-section">
       <div class="form-group">
@@ -332,19 +376,68 @@ const stopSearch = () => {
 
 <style scoped>
 .data-query-container {
-  padding: 16px;
+  /* padding: 16px; */
   font-family: system-ui, -apple-system, sans-serif;
-  background-color: #f5f5f5;
   border-radius: 8px;
   max-width: 800px;
 }
 
-.form-section {
+.settings-status {
+  /* background: #e3f2fd; */
+  border: 1px solid #bbdefb;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.settings-status h4 {
+  margin: 0 0 12px 0;
+  color: #1976d2;
+  font-size: 16px;
+}
+
+.interface-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 8px;
   background: white;
+  border-radius: 4px;
+}
+
+.interface-label {
+  font-weight: 600;
+  color: #1976d2;
+  min-width: 80px;
+}
+
+.interface-url {
+  flex: 1;
+  font-family: monospace;
+  background-color: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.interface-method {
+  background-color: #4caf50;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.form-section {
+  /* background: white; */
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 16px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  color: white;
 }
 
 .form-group {
@@ -364,7 +457,7 @@ const stopSearch = () => {
   display: block;
   margin-bottom: 6px;
   font-weight: 600;
-  color: #333;
+  color: white;
 }
 
 .form-group input {

@@ -1,4 +1,3 @@
-/* @source cursor @line_count 26 @branch main */
 
 // Global type definitions for the browser extension
 

@@ -1,4 +1,3 @@
-/* @source cursor @line_count 81 @branch main */
 import { onMounted, reactive, watch } from 'vue'
 
 // Chrome API types

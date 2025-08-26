@@ -1,4 +1,3 @@
-<!-- @source cursor @line_count 256 @branch main -->
 <template>
     <div class="panel-container">
         <!-- Server Connection Settings Section -->
