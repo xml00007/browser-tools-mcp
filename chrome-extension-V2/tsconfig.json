@@ -1,6 +1,12 @@
 {
   "extends": "./.wxt/tsconfig.json",
   "compilerOptions": {
-    "types": ["chrome"]
-  }
+    "types": ["chrome"],
+    "typeRoots": ["./types", "./node_modules/@types"]
+  },
+  "include": [
+    "types/**/*",
+    "**/*.ts",
+    "**/*.vue"
+  ]
 }

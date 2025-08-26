@@ -1,7 +1,11 @@
+/* @source cursor @line_count 81 @branch main */
 import { onMounted, reactive, watch } from 'vue'
 
+// Chrome API types
+declare const chrome: any
+
 // Define the settings object with default values
-const settings = reactive({
+const settings = reactive<BrowserConnectorSettings>({
   logLimit: 50,
   queryLimit: 30000,
   stringSizeLimit: 500,
@@ -13,19 +17,6 @@ const settings = reactive({
   serverPort: 3025,
   allowAutoPaste: true,
 })
-
-interface Settings {
-  logLimit: number
-  queryLimit: number
-  stringSizeLimit: number
-  showRequestHeaders: boolean
-  showResponseHeaders: boolean
-  maxLogSize: number
-  screenshotPath: string
-  serverHost: string
-  serverPort: number
-  allowAutoPaste: boolean
-}
 
 // Function to save settings to chrome storage
 function saveSettings() {
@@ -44,7 +35,7 @@ function loadSettings() {
   if (typeof chrome !== 'undefined' && chrome?.storage) {
     chrome.storage.local.get(
       ['browserConnectorSettings'],
-      (result: { browserConnectorSettings?: Partial<Settings> }) => {
+      (result: { browserConnectorSettings?: Partial<BrowserConnectorSettings> }) => {
         if (result.browserConnectorSettings) {
           Object.assign(settings, result.browserConnectorSettings)
         }
@@ -69,7 +60,7 @@ export function useSettings() {
     loadSettings()
   })
 
-  const updateSettings = (newSettings: Partial<Settings>) => {
+  const updateSettings = (newSettings: Partial<BrowserConnectorSettings>) => {
     Object.assign(settings, newSettings)
   }
 

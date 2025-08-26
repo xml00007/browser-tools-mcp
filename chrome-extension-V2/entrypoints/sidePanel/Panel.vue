@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import RequestList from '../../components/RequestList.vue'
+import DataQuery from '../../components/DataQuery.vue'
 import { useConnection } from '../../composables/useConnection'
 import Connect from './Connect.vue'
 import Setting from './Setting.vue'
+
 
 // Initialize the connection composable to activate the listeners
 useConnection()
@@ -18,6 +20,8 @@ useConnection()
 
     <!-- Request List Component -->
     <RequestList />
+    
+    <DataQuery />
   </div>
 </template>
 

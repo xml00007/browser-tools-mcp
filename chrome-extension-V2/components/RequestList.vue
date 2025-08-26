@@ -1,18 +1,14 @@
+<!-- @source cursor @line_count 182 @branch main -->
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-interface RequestData {
-  type: string
-  origin: string
-  path: string
-  method: string
-  requestBody: string
-  requestCookies: unknown[]
-  requestHeaders: Record<string, unknown>
-  responseStatus: number
-  responseHeaders: Record<string, unknown>
-  responseBody: string
-}
+// Chrome API types
+declare const chrome: any
+
+// Types for Chrome API callbacks
+type ChromeResponse = any
+type ChromeStorageData = any
+type ChromeStorageChanges = any
 
 const requests = ref<RequestData[]>([])
 const selectedIndex = ref<number | null>(null)
@@ -26,7 +22,7 @@ async function getCurrentTabId() {
 async function startDebugger() {
   const tabId = await getCurrentTabId()
   if (tabId) {
-    chrome.runtime.sendMessage({ type: 'START_DEBUGGER', tabId }, (response) => {
+    chrome.runtime.sendMessage({ type: 'START_DEBUGGER', tabId }, (response: ChromeResponse) => {
       if (chrome.runtime.lastError) {
         console.error(chrome.runtime.lastError.message)
         return
@@ -42,7 +38,7 @@ async function startDebugger() {
 async function stopDebugger() {
   const tabId = await getCurrentTabId()
   if (tabId) {
-    chrome.runtime.sendMessage({ type: 'STOP_DEBUGGER', tabId }, (response) => {
+    chrome.runtime.sendMessage({ type: 'STOP_DEBUGGER', tabId }, (response: ChromeResponse) => {
       if (chrome.runtime.lastError) {
         console.error(chrome.runtime.lastError.message)
         return
@@ -55,8 +51,16 @@ async function stopDebugger() {
   }
 }
 
+function setListInterface(request: RequestData) {
+  console.log('setListInterface',request)
+}
+
+function setDetailInterface(request: RequestData) {
+  
+}
+
 function loadRequests() {
-  chrome.storage.local.get('requests', (data) => {
+  chrome.storage.local.get('requests', (data: ChromeStorageData) => {
     requests.value = data.requests || []
   })
 }
@@ -77,7 +81,7 @@ function cleanRequests() {
 
 onMounted(() => {
   loadRequests()
-  chrome.storage.onChanged.addListener((changes, namespace) => {
+  chrome.storage.onChanged.addListener((changes: ChromeStorageChanges, namespace: string) => {
     if (namespace === 'local' && changes.requests) {
       loadRequests()
     }
@@ -105,11 +109,13 @@ onMounted(() => {
         <div class="request-summary" @click="toggleDetails(index)">
           <span style="flex: 0.15;">{{ request.method }}</span>
           <span style="flex: 0.15;">{{ request.responseStatus }}</span>
-          <span class="url" style="flex: 1;">{{ request.origin }}{{ request.path }}</span>
+          <span class="url" style="flex: 0.7;">{{ request.path }}</span>
         </div>
         <div v-if="selectedIndex === index" class="request-details">
-          <!-- <h4>Request Headers</h4>
-          <pre>{{ request.requestHeaders }}</pre> -->
+        <div class="request-actions" style="flex: 0.2;">
+            <button class="action-btn" @click.stop="setListInterface(request)">列表</button>
+            <button class="action-btn" @click.stop="setDetailInterface(request)">详情</button>
+        </div>
           <h4>Request Body</h4>
           <pre>{{ request.requestBody }}</pre>
           <!-- <h4>Response Headers</h4>
@@ -164,5 +170,8 @@ pre {
   padding: 8px;
   border-radius: 4px;
   font-size: 11px;
+}
+.action-btn {
+  margin-right: 10px;
 }
 </style>
