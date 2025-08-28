@@ -4,11 +4,24 @@ import { reactive, watch, computed } from 'vue'
 const settings = reactive({
   list: null as RequestData | null,
   detail: null as RequestData | null,
+  listConfig: {
+    total: 'data.totalCount',
+    pageNo: 'data.pageNo',
+    pageSize: 'data.pageSize',
+    list: 'data.list'
+  } as ListConfig,
 })
 
 interface Settings {
   list: RequestData | null
   detail: RequestData | null
+}
+
+interface ListConfig {
+  total: string
+  pageNo: string
+  pageSize: string
+  list: string
 }
 
 // Derived computed properties for easy URL extraction
@@ -25,7 +38,7 @@ const detailUrl = computed(() => {
 // Helper function to extract base URL from request data
 const extractBaseUrl = (request: RequestData | null): string => {
   if (!request) return ''
-  return `${request.origin}${request.path.split('?')[0]}`
+  return `${request.origin}${request.path}`
 }
 
 // The composable function
@@ -58,6 +71,13 @@ export function useDataQuery() {
 
   const setListInterface = (request: RequestData) => {
     settings.list = request
+    settings.listConfig = {
+      total: 'data.totalCount',
+      pageNo: 'data.pageNo',
+      pageSize: 'data.pageSize',
+      list: 'data.list'
+    }
+    // 分析出list 接口的 total pageNo pageSize list 分别对应的是哪几个字段
     console.log('列表接口已设置:', extractBaseUrl(request))
   }
 

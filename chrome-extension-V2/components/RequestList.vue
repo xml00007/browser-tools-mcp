@@ -105,7 +105,8 @@ const getStatusClass = (status: number): string => {
 }
 
 onMounted(() => {
-  loadRequests()
+  cleanRequests()
+  // loadRequests()
   chrome.storage.onChanged.addListener((changes: ChromeStorageChanges, namespace: string) => {
     if (namespace === 'local' && changes.requests) {
       loadRequests()
