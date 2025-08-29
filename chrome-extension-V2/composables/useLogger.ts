@@ -42,33 +42,7 @@ export function useLogger(moduleName: string) {
     logger.fatal(moduleName, message, errorObj, data, tags)
   }
 
-  // 包装异步操作的日志记录
-  const logAsync = async <T>(
-    operation: () => Promise<T>,
-    operationName: string,
-    logData?: any
-  ): Promise<T> => {
-    const startTime = Date.now()
-    info(`开始执行: ${operationName}`, logData, ['async-start'])
 
-    try {
-      const result = await operation()
-      const duration = Date.now() - startTime
-      info(`完成执行: ${operationName} (耗时: ${duration}ms)`, { 
-        duration, 
-        result: typeof result === 'object' ? '...' : result 
-      }, ['async-success'])
-      return result
-    } catch (err) {
-      const duration = Date.now() - startTime
-      const errorObj = err instanceof Error ? err : new Error(String(err))
-      error(`执行失败: ${operationName} (耗时: ${duration}ms)`, errorObj, { 
-        duration, 
-        originalData: logData 
-      }, ['async-error'])
-      throw err
-    }
-  }
 
   // 性能监控
   const logPerformance = (name: string, startTime: number, data?: any) => {
@@ -165,7 +139,6 @@ export function useLogger(moduleName: string) {
     fatal,
     
     // 高级日志方法
-    logAsync,
     logPerformance,
     logUserAction,
     logApiCall,

@@ -8,7 +8,7 @@
 import { useLogger } from '../composables/useLogger'
 
 export function useMyModule() {
-  const { info, warn, error, logAsync, logUserAction } = useLogger('MyModule')
+  const { info, warn, error, logUserAction } = useLogger('MyModule')
   
   // 基础日志
   info('模块初始化完成')
@@ -17,10 +17,26 @@ export function useMyModule() {
   
   // 异步操作日志
   const fetchData = async () => {
-    return await logAsync(async () => {
+    info('开始执行: 获取数据', undefined, ['async-start'])
+    const startTime = Date.now()
+    
+    try {
       const response = await fetch('/api/data')
-      return response.json()
-    }, '获取数据')
+      const result = await response.json()
+      const duration = Date.now() - startTime
+      info(`完成执行: 获取数据 (耗时: ${duration}ms)`, { 
+        duration, 
+        result: '...' 
+      }, ['async-success'])
+      return result
+    } catch (err) {
+      const duration = Date.now() - startTime
+      const errorObj = err instanceof Error ? err : new Error(String(err))
+      error(`执行失败: 获取数据 (耗时: ${duration}ms)`, errorObj, { 
+        duration
+      }, ['async-error'])
+      throw err
+    }
   }
   
   // 用户行为日志

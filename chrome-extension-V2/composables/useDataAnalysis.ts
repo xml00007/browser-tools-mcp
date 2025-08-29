@@ -22,7 +22,7 @@ export interface AnalysisConfig {
 export function useDataAnalysis() {
   const { settings: querySettings } = useDataQuery()
   const { settings: connectionSettings } = useConnection()
-  const { info, warn, error, logAsync, logUserAction, logPerformance } = useLogger('DataAnalysis')
+  const { info, warn, error, logUserAction, logPerformance } = useLogger('DataAnalysis')
 
   const analysisState = reactive({
     isRunning: false,
@@ -76,13 +76,6 @@ export function useDataAnalysis() {
           }, ['mapping-analysis', 'field-found'])
         }
       })
-      
-      info('字段映射分析完成', { 
-        totalFields: Object.keys(requestBody).length,
-        foundMappings: Object.keys(res).filter(k => res[k]?.length > 0).length,
-        mappingResults: res 
-      }, ['mapping-analysis', 'complete'])
-      
       return res
     } catch (err) {
       const errorObj = err instanceof Error ? err : new Error(String(err))
@@ -176,7 +169,10 @@ export function useDataAnalysis() {
 
   // 获取列表数据
   const fetchListData = async (): Promise<any[]> => {
-    return await logAsync(async () => {
+    info('开始执行: 获取列表数据', undefined, ['async-start'])
+    const startTime = Date.now()
+    
+    try {
       if (!querySettings.list) {
         throw new Error('未设置列表接口')
       }
@@ -202,8 +198,21 @@ export function useDataAnalysis() {
       const list = getNestedValue(response, querySettings.listConfig.list)
       info(`成功获取列表数据`, { count: list?.length || 0 })
       
+      const duration = Date.now() - startTime
+      info(`完成执行: 获取列表数据 (耗时: ${duration}ms)`, { 
+        duration, 
+        result: '...' 
+      }, ['async-success'])
+      
       return list
-    }, '获取列表数据')
+    } catch (err) {
+      const duration = Date.now() - startTime
+      const errorObj = err instanceof Error ? err : new Error(String(err))
+      error(`执行失败: 获取列表数据 (耗时: ${duration}ms)`, errorObj, { 
+        duration
+      }, ['async-error'])
+      throw err
+    }
   }
 
 
