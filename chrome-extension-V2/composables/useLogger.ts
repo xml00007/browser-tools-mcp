@@ -112,11 +112,11 @@ export function useLogger(moduleName: string) {
   // 生命周期钩子
   onMounted(() => {
     refreshLogs()
-    info(`模块 ${moduleName} 已初始化`, null, ['lifecycle'])
+    // info(`模块 ${moduleName} 已初始化`, null, ['lifecycle'])
   })
 
   onUnmounted(() => {
-    info(`模块 ${moduleName} 已卸载`, null, ['lifecycle'])
+    // info(`模块 ${moduleName} 已卸载`, null, ['lifecycle'])
   })
 
   // 返回API

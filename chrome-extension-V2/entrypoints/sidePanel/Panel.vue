@@ -23,8 +23,7 @@ const toggleLogViewer = () => {
 // Initialize the connection composable to activate the listeners
 useConnection()
 
-// 记录面板初始化
-info('侧边栏面板已加载')
+
 </script>
 
 <template>

@@ -61,11 +61,9 @@ const progress = computed(() => {
 watch([listUrl, detailUrl], ([newListUrl, newDetailUrl]) => {
   if (newListUrl && newListUrl !== formData.listUrl) {
     formData.listUrl = extractBaseUrl(settings.list)
-    info('自动填入列表接口', { url: formData.listUrl }, ['auto-fill', 'list-interface'])
   }
   if (newDetailUrl && newDetailUrl !== formData.detailUrl) {
     formData.detailUrl = extractBaseUrl(settings.detail)
-    info('自动填入详情接口', { url: formData.detailUrl }, ['auto-fill', 'detail-interface'])
   }
 }, { immediate: true })
 
@@ -111,9 +109,7 @@ const clearState = () => {
   currentPage.value = 1
   totalPages.value = 0
   
-  info('用户界面状态已清空', { 
-    mode: useAnalysisMode.value ? 'analysis' : 'legacy-search' 
-  }, ['state-clear', 'user-action'])
+
 }
 
 // Fetch list data with pagination
@@ -124,10 +120,7 @@ const fetchListData = async (page: number) => {
     const url = new URL(formData.listUrl)
     url.searchParams.set('page', page.toString())
     
-    info(`开始获取第${page}页列表数据`, { 
-      page, 
-      url: url.toString() 
-    }, ['fetch-list', 'pagination'])
+
     
     const response = await fetch(url.toString())
     if (!response.ok) {
@@ -137,17 +130,9 @@ const fetchListData = async (page: number) => {
     const data = await response.json()
     const recordCount = data.data?.length || data.list?.length || data.items?.length || 0
     
-    logApiCall(url.toString(), 'GET', response.status, {
-      page,
-      recordCount,
-      totalPages: data.totalPages
-    })
+
     
-    info(`第${page}页列表数据获取成功`, { 
-      page, 
-      recordCount,
-      totalPages: data.totalPages 
-    }, ['fetch-list', 'success'])
+
     
     // Update total pages if available
     if (data.totalPages) {
@@ -182,7 +167,7 @@ const fetchDetailData = async (id: string) => {
     
     const data = await response.json()
     
-    logApiCall(url.toString(), 'GET', response.status, { id })
+
     logPerformance(`获取详情数据 (ID: ${id})`, startTime)
     
     return data.data || data
@@ -240,10 +225,7 @@ const startSearch = async () => {
       searchValue: formData.searchValue
     })
     
-    info('开始传统搜索流程', {
-      searchKey: formData.searchKey,
-      targetValue: formData.searchValue
-    }, ['legacy-search', 'start'])
+
     
     try {
       let page = 1
@@ -284,13 +266,7 @@ const startSearch = async () => {
             
             // Check if this detail has the target field value
             if (checkDetailForTarget(detail, formData.searchKey, formData.searchValue)) {
-              info(`找到目标数据！`, {
-                itemId,
-                searchKey: formData.searchKey,
-                searchValue: formData.searchValue,
-                page,
-                detail
-              }, ['legacy-search', 'match-found', 'success'])
+              info(`找到目标数据: ${itemId}`, { page })
               
               foundResult.value = {
                 listItem: item,
@@ -300,16 +276,6 @@ const startSearch = async () => {
               }
               found = true
               break
-            } else {
-              // Get current value for logging (使用lodash优化)
-              const currentValue = getNestedValue(detail, formData.searchKey)
-              info(`数据不匹配`, {
-                itemId,
-                searchKey: formData.searchKey,
-                expectedValue: formData.searchValue,
-                actualValue: currentValue,
-                page
-              }, ['legacy-search', 'no-match'])
             }
             
             // Add small delay to prevent overwhelming the server
@@ -328,12 +294,7 @@ const startSearch = async () => {
         if (!found) {
           page++
           if (totalPages.value > 0 && page > totalPages.value) {
-            warn('已搜索所有页面，未找到目标数据', {
-              totalPages: totalPages.value,
-              searchedPages: page - 1,
-              searchKey: formData.searchKey,
-              targetValue: formData.searchValue
-            }, ['legacy-search', 'all-pages-searched'])
+                    warn(`已搜索所有 ${totalPages.value} 页，未找到目标数据`)
             break
           }
         }
@@ -341,13 +302,7 @@ const startSearch = async () => {
       
       const searchEndTime = Date.now()
       if (!found) {
-        warn('搜索完成，未找到匹配的数据', {
-          totalPages: totalPages.value || page - 1,
-          searchedPages: page - 1,
-          searchKey: formData.searchKey,
-          targetValue: formData.searchValue,
-          searchDuration: searchEndTime - searchStartTime
-        }, ['legacy-search', 'no-match-final'])
+        warn(`搜索完成，未找到匹配的数据`)
       }
       
       logPerformance('传统搜索流程', searchStartTime)
@@ -373,10 +328,7 @@ const stopSearch = () => {
     stopAnalysis()
   } else {
     isSearching.value = false
-    warn('传统搜索已手动停止', {
-      currentPage: currentPage.value,
-      totalPages: totalPages.value
-    }, ['legacy-search', 'manual-stop'])
+    warn('搜索已手动停止')
   }
 }
 </script>
