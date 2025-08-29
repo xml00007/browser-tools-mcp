@@ -227,17 +227,14 @@ export function useDataAnalysis() {
             const fieldValue = searchResult?.value
 
             // 5. 比较值
-            if (fieldValue === analysisState.config.targetValue) {
-              info(`找到匹配数据 #${index + 1}`, {
-                url: detailUrl,
-                body: detailOptions.body,
-                fieldPath: searchResult?.path,
-                fieldValue
-              }, ['analysis-match'])
-            }
+            info(`处理第${index + 1}条数据`, {
+              url: detailUrl,
+              body: detailOptions.body,
+              fieldPath: searchResult?.path,
+              fieldValue
+            }, [fieldValue === analysisState.config.targetValue ? 'success' : 'fail'])
 
             analysisState.progress++
-            logPerformance(`处理第${index + 1}条数据`, itemStartTime)
           } catch (err) {
             const errorObj = err instanceof Error ? err : new Error(String(err))
             error(`第${index + 1}条数据处理失败`, errorObj, {

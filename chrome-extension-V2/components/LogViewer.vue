@@ -1,4 +1,4 @@
-/* @source cursor @line_count 737 @branch main */
+/* @source cursor @line_count 620 @branch main */
 <template>
   <div class="log-viewer">
     <!-- 工具栏 -->
@@ -53,29 +53,14 @@
     <!-- 日志列表 -->
     <div class="log-list">
       <div class="log-header">
-        <div class="log-controls">
-          <label>
-            <input 
-              type="checkbox" 
-              v-model="autoScroll"
-            />
-            自动滚动
-          </label>
-          <label>
-            <input 
-              type="checkbox" 
-              v-model="showDetails"
-            />
-            显示详情
-          </label>
-          <span class="log-count">显示 {{ filteredLogs.length }} 条日志</span>
+        <div class="log-hint">
+          点击日志条目查看详情
         </div>
       </div>
 
       <div 
         ref="logContainer" 
         class="log-container"
-        :class="{ 'auto-scroll': autoScroll }"
       >
         <div 
           v-for="log in displayedLogs" 
@@ -94,9 +79,9 @@
             <div class="log-time">
               {{ formatTime(log.timestamp) }}
             </div>
-            <div class="log-module">
+            <!-- <div class="log-module">
               {{ log.module }}
-            </div>
+            </div> -->
             <div class="log-message">
               {{ log.message }}
             </div>
@@ -111,7 +96,7 @@
             </div>
           </div>
 
-          <div v-if="showDetails && (log.data || log.error)" class="log-details">
+          <div v-if="expandedLogs.has(log.id) && (log.data || log.error)" class="log-details">
             <div v-if="log.error" class="log-error">
               <h5>错误信息:</h5>
               <pre>{{ log.error.message }}</pre>
@@ -166,8 +151,6 @@ const {
 const showFilters = ref(true)
 const showStats = ref(true)
 const showSettings = ref(false)
-const showDetails = ref(false)
-const autoScroll = ref(true)
 const expandedLogs = ref(new Set<string>())
 const logContainer = ref<HTMLElement>()
 
@@ -255,15 +238,7 @@ watch(filter, () => {
   updateFilter(filter.value)
 }, { deep: true })
 
-// 自动滚动
-watch(filteredLogs, async () => {
-  if (autoScroll.value) {
-    await nextTick()
-    if (logContainer.value) {
-      logContainer.value.scrollTop = logContainer.value.scrollHeight
-    }
-  }
-})
+
 
 // 自动刷新
 let refreshTimer: number | null = null
@@ -408,6 +383,12 @@ onMounted(() => {
   background: #2d2d2d;
   border-bottom: 1px solid #555;
   color: #ffffff;
+  text-align: center;
+}
+
+.log-header .log-hint {
+  margin: 0 auto;
+  display: inline-block;
 }
 
 .log-controls {
@@ -415,6 +396,14 @@ onMounted(() => {
   gap: 16px;
   align-items: center;
   font-size: 12px;
+}
+
+.log-hint {
+  color: #888;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #333;
 }
 
 .log-container {
@@ -434,17 +423,36 @@ onMounted(() => {
   font-family: monospace;
   font-size: 12px;
   color: #ffffff;
+  transition: all 0.2s ease;
 }
 
 .log-entry:hover {
   background: #3c3c3c;
+  border-color: #007bff;
+}
+
+.log-entry.expanded {
+  background: #353535;
+  border-color: #007bff;
 }
 
 .log-main {
   display: grid;
-  grid-template-columns: 60px 120px 100px 1fr auto;
+  grid-template-columns: 20px 60px 220px 1fr auto;
   gap: 8px;
   align-items: center;
+}
+
+.log-main::before {
+  content: '▶';
+  color: #888;
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+
+.log-entry.expanded .log-main::before {
+  transform: rotate(90deg);
+  color: #007bff;
 }
 
 .log-level {
@@ -472,6 +480,7 @@ onMounted(() => {
 
 .log-message {
   color: #ffffff;
+  flex:1
 }
 
 .log-tags {
@@ -491,6 +500,18 @@ onMounted(() => {
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid #555;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
 }
 
 .log-details h5 {

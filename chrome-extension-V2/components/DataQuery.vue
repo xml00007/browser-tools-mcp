@@ -204,120 +204,15 @@ const startSearch = async () => {
     }, ['validation-error', 'user-input'])
     return
   }
-  
-  if (useAnalysisMode.value) {
-    // Use the new analysis logic
+     // Use the new analysis logic
     logUserAction('启动智能分析模式', { 
       searchKey: formData.searchKey,
       searchValue: formData.searchValue,
       maxConcurrency: formData.maxConcurrency
     })
+    // 深度分析
     await startAnalysis()
-  } else {
-    // Use legacy search logic
-    const searchStartTime = Date.now()
-    isSearching.value = true
-    
-    logUserAction('启动传统搜索模式', {
-      listUrl: formData.listUrl,
-      detailUrl: formData.detailUrl,
-      searchKey: formData.searchKey,
-      searchValue: formData.searchValue
-    })
-    
 
-    
-    try {
-      let page = 1
-      let found = false
-      const maxPages = 50 // 安全限制，避免无限循环
-      
-      while (!found && page <= maxPages) {
-        currentPage.value = page
-        
-        // Fetch list data
-        const listData = await fetchListData(page)
-        
-        if (!listData || listData.length === 0) {
-          warn('没有更多数据，搜索结束', { 
-            page, 
-            maxPages 
-          }, ['legacy-search', 'no-more-data'])
-          break
-        }
-        
-        // Check each item in the list
-        for (const item of listData) {
-          if (found) break
-          
-          // Extract ID from list item (support various ID field names)
-          const itemId = item.id || item._id || item.uuid || item.key
-          if (!itemId) {
-            warn('列表项缺少ID字段，跳过', { 
-              item: Object.keys(item),
-              page 
-            }, ['legacy-search', 'missing-id'])
-            continue
-          }
-          
-          try {
-            // Fetch detail data
-            const detail = await fetchDetailData(itemId)
-            
-            // Check if this detail has the target field value
-            if (checkDetailForTarget(detail, formData.searchKey, formData.searchValue)) {
-              info(`找到目标数据: ${itemId}`, { page })
-              
-              foundResult.value = {
-                listItem: item,
-                detail: detail,
-                page: page,
-                itemId: itemId
-              }
-              found = true
-              break
-            }
-            
-            // Add small delay to prevent overwhelming the server
-            await new Promise(resolve => setTimeout(resolve, 100))
-            
-          } catch (error: any) {
-            warn(`获取详情失败，跳过该项`, {
-              itemId,
-              page,
-              error: error.message
-            }, ['legacy-search', 'fetch-error'])
-            continue
-          }
-        }
-        
-        if (!found) {
-          page++
-          if (totalPages.value > 0 && page > totalPages.value) {
-                    warn(`已搜索所有 ${totalPages.value} 页，未找到目标数据`)
-            break
-          }
-        }
-      }
-      
-      const searchEndTime = Date.now()
-      if (!found) {
-        warn(`搜索完成，未找到匹配的数据`)
-      }
-      
-      logPerformance('传统搜索流程', searchStartTime)
-      
-    } catch (error: any) {
-      const err = error instanceof Error ? error : new Error(String(error))
-      error('搜索过程中发生错误', err, {
-        searchKey: formData.searchKey,
-        targetValue: formData.searchValue,
-        currentPage: currentPage.value
-      }, ['legacy-search', 'fatal-error'])
-    } finally {
-      isSearching.value = false
-    }
-  }
 }
 
 // Stop search
